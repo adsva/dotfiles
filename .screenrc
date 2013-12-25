@@ -1,0 +1,12 @@
+term screen-256color
+
+hardstatus off
+hardstatus alwayslastline
+hardstatus string "%{.kw}%-w%{= kR}[%{r}%n %t%{-}%{= kR}]%?%{= .kw}%+w%?"
+startup_message off
+
+defscrollback 10000
+
+screen -t emacs emacs
+screen -t bash
+screen -t bash

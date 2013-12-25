@@ -1,0 +1,50 @@
+# Custom bash bizniz, source from .bashrc
+
+# Git aware prompt
+c_reset=`tput sgr0`
+c_user=`tput setaf 3; tput bold`
+c_path=`tput setaf 4; tput bold`
+c_git_clean=`tput setaf 2`
+c_git_dirty=`tput setaf 1`
+git_prompt ()
+{
+    if ! git rev-parse --git-dir > /dev/null 2>&1; then
+        return 0
+    fi
+
+    git_branch=$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')
+
+    if git diff --quiet 2>/dev/null >&2; then
+        git_color="${c_git_clean}"
+    else
+        git_color=${c_git_dirty}
+    fi
+
+    echo -e -n " \001$git_color\002$git_branch"
+}
+git_branch ()
+{
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+          return 0
+  fi
+  echo -e -n [$(git branch 2>/dev/null| sed -n '/^\*/s/^\* //p')]
+}
+git_color ()
+{
+  if ! git rev-parse --git-dir > /dev/null 2>&1; then
+          return 0
+  fi
+  if git diff --quiet 2>/dev/null >&2; then
+      git_color="${c_git_clean}"
+  else
+      git_color=${c_git_dirty}
+  fi
+  echo -e -n $git_color
+
+}
+
+PS1='\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git_branch)\[$c_reset\]\$ '
+
+export GOPATH=$HOME/code/go
+
+alias semacs="SUDO_EDITOR=\"emacsclient -t -a emacs\" sudoedit"
