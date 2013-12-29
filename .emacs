@@ -2,8 +2,8 @@
 
 ; packages!
 (require 'package)
-(add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("melpa" . "http://melpa.milkbox.net/packages/")))
 
 ; web-mode
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -17,19 +17,16 @@
   (load-theme 'tangotango t)
 )
 
+
 ; Gofmt on save
 (add-hook 'before-save-hook 'gofmt-before-save)
 
-;(toggle-text-mode-auto-fill)
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq-default c-basic-offset 2)
 (show-paren-mode 1)
 (column-number-mode 1)
-(global-font-lock-mode 1)
-(setq font-lock-maximum-decoration 1)
 (setq scroll-step 1)
-;(setq auto-save-default nil)
 
 ;; IF colors are causing trouble with screen, try ading this to
 ;; screenrc and setting TERM to xterm-26color
@@ -137,7 +134,8 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default))))
+ '(custom-safe-themes (quote ("1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
+ '(global-font-lock-mode t))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
