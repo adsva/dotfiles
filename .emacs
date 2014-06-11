@@ -2,8 +2,8 @@
 
 ; packages!
 (require 'package)
-(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("melpa" . "http://melpa.milkbox.net/packages/")))
+(add-to-list 'package-archives
+  '("melpa" . "http://melpa.milkbox.net/packages/") t)
 
 ; web-mode
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -11,15 +11,27 @@
       '(("django"    . "\\.html\\'"))
 )
 
+
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
+  (projectile-global-mode)
+  (global-flycheck-mode)
+  (ws-butler-global-mode)
+  (flx-ido-mode 1)
+  ;; disable ido faces to see flx highlights.
+  (setq ido-use-faces nil)
+  (setq flycheck-flake8rc "~/.flake8rc")
   ; colors!
-  (load-theme 'tangotango t)
+  (load-theme 'dorsey t)
+
 )
 
 
 ; Gofmt on save
-(add-hook 'before-save-hook 'gofmt-before-save)
+;(add-hook 'before-save-hook 'gofmt-before-save)
+
 
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
@@ -38,12 +50,19 @@
 ;; # erase background with current bg color
 ;; defbce "on"
 
+(require 'ws-butler)
+
 ;; Better buffer handling
 (require 'ido)
-(ido-mode)
+
+(ido-mode 1)
+(ido-everywhere 1)
 
 (require 'uniquify)
 (setq-default uniquify-buffer-name-style 'post-forward)
+
+
+(setq projectile-completion-system 'ido)
 
 (global-set-key "\M-r" 'rgrep)
 (global-set-key "\M-n" 'next-error)
@@ -54,6 +73,8 @@
 (global-set-key "\M-j" 'backward-char)
 (global-set-key "\M-k" 'next-line)
 (global-set-key "\M-l" 'forward-char)
+
+(global-set-key "\C-p" 'projectile-find-file)
 
 ;;;---------------------------------------------------------------------
 ;;; display-buffer
@@ -83,7 +104,7 @@
 
 (setq display-buffer-function 'my-display-buffer-function)
 
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
+;(add-hook 'before-save-hook 'delete-trailing-whitespace)
 
 ;; ========== Place Backup Files in Specific Directory ==========
 
@@ -134,11 +155,14 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-safe-themes (quote ("1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
- '(global-font-lock-mode t))
+ '(column-number-mode t)
+ '(custom-safe-themes (quote ("0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
+ '(global-font-lock-mode t)
+ '(show-paren-mode t)
+ '(tool-bar-mode nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
+ '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal)))))
