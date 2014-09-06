@@ -7,6 +7,9 @@
 
 ; web-mode
 (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+
 (setq web-mode-engines-alist
       '(("django"    . "\\.html\\'"))
 )
@@ -30,7 +33,7 @@
 
 
 ; Gofmt on save
-;(add-hook 'before-save-hook 'gofmt-before-save)
+(add-hook 'before-save-hook 'gofmt-before-save)
 
 
 (setq-default indent-tabs-mode nil)
@@ -74,7 +77,10 @@
 (global-set-key "\M-k" 'next-line)
 (global-set-key "\M-l" 'forward-char)
 
-(global-set-key "\C-p" 'projectile-find-file)
+(global-set-key "\C-f" 'projectile-find-file)
+(global-set-key "\C-p" 'projectile-ack)
+
+(global-set-key [S-dead-grave] "`")
 
 ;;;---------------------------------------------------------------------
 ;;; display-buffer
@@ -156,7 +162,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes (quote ("0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
+ '(custom-safe-themes (quote ("e26780280b5248eb9b2d02a237d9941956fc94972443b0f7aeec12b5c15db9f3" "a774c5551bc56d7a9c362dca4d73a374582caedb110c201a09b410c0ebbb5e70" "0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
  '(global-font-lock-mode t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))

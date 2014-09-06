@@ -48,3 +48,6 @@ PS1='\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git
 export GOPATH=$HOME/code/go
 
 alias semacs="SUDO_EDITOR=\"emacsclient -t -a emacs\" sudoedit"
+
+export PROMPT_COMMAND='history -a'
+xinput set-prop 11 135 0
