@@ -42,6 +42,7 @@
 (show-paren-mode 1)
 (column-number-mode 1)
 (setq scroll-step 1)
+(scroll-bar-mode 0)
 
 ;; IF colors are causing trouble with screen, try ading this to
 ;; screenrc and setting TERM to xterm-26color
@@ -60,10 +61,19 @@
 
 (ido-mode 1)
 (ido-everywhere 1)
+(require 'ido-vertical-mode)
+(ido-vertical-mode)
+(defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
+  (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+  (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
+  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
+  (define-key ido-completion-map (kbd "<up>") 'ido-prev-match))
+(add-hook 'ido-setup-hook 'ido-define-keys)
 
 (require 'uniquify)
 (setq-default uniquify-buffer-name-style 'post-forward)
 
+(setq ack-and-a-half-executable "/usr/bin/ack")
 
 (setq projectile-completion-system 'ido)
 
