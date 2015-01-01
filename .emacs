@@ -4,36 +4,66 @@
 (require 'package)
 (add-to-list 'package-archives
   '("melpa" . "http://melpa.milkbox.net/packages/") t)
+(package-initialize)
+
+(if (not (package-installed-p 'use-package))
+    (progn
+      (package-refresh-contents)
+      (package-install 'use-package)))
+
+(require 'use-package)
+
+(use-package web-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+  (setq web-mode-engines-alist '(("django"    . "\\.html\\'")))
+  (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-code-indent-offset 2)
+  (setq web-mode-css-indent-offset 2)
+  :ensure t)
+(use-package go-mode
+  :init
+  (add-hook 'before-save-hook 'gofmt-before-save)
+  :ensure t)
+(use-package projectile
+  :init
+  (projectile-global-mode)
+  (setq projectile-completion-system 'ido)
+  (global-set-key "\C-f" 'projectile-find-file)
+  (global-set-key "\C-p" 'projectile-ack)
+  :ensure t)
+(use-package flycheck
+  :init
+  (global-flycheck-mode)
+  (setq flycheck-flake8rc "~/.flake8rc")
+  :ensure t)
+(use-package flx-ido
+  :init
+  (flx-ido-mode 1)
+  (setq ido-use-faces nil)
+  :ensure t)
+(use-package ws-butler
+  :init
+  (ws-butler-global-mode)
+  :ensure t)
+(use-package sublime-themes
+  :ensure t)
+(use-package ido-vertical-mode
+  :init
+  (ido-vertical-mode)
+  :ensure t)
 
 ; web-mode
-(add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-(add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-
-(setq web-mode-engines-alist
-      '(("django"    . "\\.html\\'"))
-)
 
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
-  (projectile-global-mode)
-  (global-flycheck-mode)
-  (ws-butler-global-mode)
-  (flx-ido-mode 1)
-  ;; disable ido faces to see flx highlights.
-  (setq ido-use-faces nil)
-  (setq flycheck-flake8rc "~/.flake8rc")
-  ; colors!
   (load-theme 'dorsey t)
-
 )
-
-
-; Gofmt on save
-(add-hook 'before-save-hook 'gofmt-before-save)
 
 
 (setq-default indent-tabs-mode nil)
@@ -54,15 +84,11 @@
 ;; # erase background with current bg color
 ;; defbce "on"
 
-(require 'ws-butler)
-
 ;; Better buffer handling
 (require 'ido)
-
 (ido-mode 1)
 (ido-everywhere 1)
-(require 'ido-vertical-mode)
-(ido-vertical-mode)
+
 (defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
   (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
   (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
@@ -75,7 +101,6 @@
 
 (setq ack-and-a-half-executable "/usr/bin/ack")
 
-(setq projectile-completion-system 'ido)
 
 (global-set-key "\M-r" 'rgrep)
 (global-set-key "\M-n" 'next-error)
@@ -87,8 +112,6 @@
 (global-set-key "\M-k" 'next-line)
 (global-set-key "\M-l" 'forward-char)
 
-(global-set-key "\C-f" 'projectile-find-file)
-(global-set-key "\C-p" 'projectile-ack)
 
 (global-set-key [S-dead-grave] "`")
 
