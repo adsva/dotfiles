@@ -31,8 +31,9 @@
   :init
   (projectile-global-mode)
   (setq projectile-completion-system 'ido)
+  (setq projectile-use-git-grep t)
   (global-set-key "\C-f" 'projectile-find-file)
-  (global-set-key "\C-p" 'projectile-ack)
+  (global-set-key "\C-p" 'projectile-grep)
   :ensure t)
 (use-package flycheck
   :init
