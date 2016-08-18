@@ -1,9 +1,7 @@
-(server-start)
-
 ; packages!
 (require 'package)
 (add-to-list 'package-archives
-  '("melpa" . "http://melpa.milkbox.net/packages/") t)
+  '("melpa" . "http://melpa.org/packages/") t)
 (package-initialize)
 
 (if (not (package-installed-p 'use-package))
@@ -23,12 +21,23 @@
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   :ensure t)
+(use-package auto-complete
+  :config
+  (require 'auto-complete-config)
+  (global-auto-complete-mode t)
+  :ensure t)
+(use-package go-eldoc
+  :ensure t)
 (use-package go-mode
-  :init
+  :config
+  (setq gofmt-command "goimports")
   (add-hook 'before-save-hook 'gofmt-before-save)
+  (add-hook 'go-mode-hook 'go-eldoc-setup)
+  :ensure t)
+(use-package go-autocomplete
   :ensure t)
 (use-package projectile
-  :init
+  :config
   (projectile-global-mode)
   (setq projectile-completion-system 'ido)
   (setq projectile-use-git-grep t)
@@ -36,23 +45,23 @@
   (global-set-key "\C-p" 'projectile-grep)
   :ensure t)
 (use-package flycheck
-  :init
+  :config
   (global-flycheck-mode)
   (setq flycheck-flake8rc "~/.flake8rc")
   :ensure t)
 (use-package flx-ido
-  :init
+  :config
   (flx-ido-mode 1)
   (setq ido-use-faces nil)
   :ensure t)
 (use-package ws-butler
-  :init
+  :config
   (ws-butler-global-mode)
   :ensure t)
 (use-package sublime-themes
   :ensure t)
 (use-package ido-vertical-mode
-  :init
+  :config
   (ido-vertical-mode)
   :ensure t)
 
@@ -94,7 +103,13 @@
   (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
   (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
   (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
-  (define-key ido-completion-map (kbd "<up>") 'ido-prev-match))
+  (define-key ido-completion-map (kbd "<up>") 'ido-prev-match)
+  (defadvice ido-find-file (after find-file-sudo activate)
+    "Find file as root if necessary."
+    (unless (and buffer-file-name
+                 (file-writable-p buffer-file-name))
+      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
+
 (add-hook 'ido-setup-hook 'ido-define-keys)
 
 (require 'uniquify)
@@ -196,7 +211,9 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(column-number-mode t)
- '(custom-safe-themes (quote ("e26780280b5248eb9b2d02a237d9941956fc94972443b0f7aeec12b5c15db9f3" "a774c5551bc56d7a9c362dca4d73a374582caedb110c201a09b410c0ebbb5e70" "0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
+ '(custom-safe-themes
+   (quote
+    ("e26780280b5248eb9b2d02a237d9941956fc94972443b0f7aeec12b5c15db9f3" "a774c5551bc56d7a9c362dca4d73a374582caedb110c201a09b410c0ebbb5e70" "0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
  '(global-font-lock-mode t)
  '(show-paren-mode t)
  '(tool-bar-mode nil))
@@ -205,4 +222,4 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Ubuntu Mono" :foundry "unknown" :slant normal :weight normal :height 113 :width normal)))))
+ '(default ((t (:family "Bitstream Vera Sans Mono" :foundry "Bits" :slant normal :weight normal :height 98 :width normal)))))
