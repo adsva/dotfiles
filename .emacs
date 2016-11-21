@@ -130,6 +130,7 @@
 
 
 (global-set-key [S-dead-grave] "`")
+(global-set-key (kbd "C-<backspace>") 'c-hungry-delete-backwards)
 
 ;;;---------------------------------------------------------------------
 ;;; display-buffer
