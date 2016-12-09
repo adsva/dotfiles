@@ -24,7 +24,7 @@
 (use-package auto-complete
   :config
   (require 'auto-complete-config)
-  (global-auto-complete-mode t)
+  ;(global-auto-complete-mode t)
   :ensure t)
 (use-package go-eldoc
   :ensure t)
@@ -34,13 +34,19 @@
   (add-hook 'before-save-hook 'gofmt-before-save)
   (add-hook 'go-mode-hook 'go-eldoc-setup)
   :ensure t)
+(use-package go-guru
+  :ensure t)
 (use-package go-autocomplete
+  :ensure t)
+(use-package virtualenvwrapper
+  :config
   :ensure t)
 (use-package projectile
   :config
   (projectile-global-mode)
   (setq projectile-completion-system 'ido)
   (setq projectile-use-git-grep t)
+  (setq projectile-switch-project-action 'venv-projectile-auto-workon)
   (global-set-key "\C-f" 'projectile-find-file)
   (global-set-key "\C-p" 'projectile-grep)
   :ensure t)
@@ -64,8 +70,13 @@
   :config
   (ido-vertical-mode)
   :ensure t)
-
-; web-mode
+(use-package jedi
+  :config
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'venv-projectile-auto-workon)
+  (setq jedi:complete-on-dot t)
+  (setq jedi:use-shortcuts t)
+  :ensure t)
 
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
@@ -215,6 +226,9 @@
    (quote
     ("e26780280b5248eb9b2d02a237d9941956fc94972443b0f7aeec12b5c15db9f3" "a774c5551bc56d7a9c362dca4d73a374582caedb110c201a09b410c0ebbb5e70" "0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
  '(global-font-lock-mode t)
+ '(package-selected-packages
+   (quote
+    (virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
