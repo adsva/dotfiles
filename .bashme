@@ -42,8 +42,8 @@ git_color ()
   echo -e -n $git_color
 
 }
-
-PS1='\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git_branch)\[$c_reset\]\$ '
+TITLEBAR='\[\033]2;\u@\h\007\]'
+PS1="${TITLEBAR}\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git_branch)\[$c_reset\]\$ "
 
 export GOPATH=$HOME/code/go
 
