@@ -2,7 +2,7 @@
 
 # Git aware prompt
 c_reset=`tput sgr0`
-c_user=`tput setaf 3; tput bold`
+c_user=`tput setaf 2; tput bold`
 c_path=`tput setaf 4; tput bold`
 c_git_clean=`tput setaf 2`
 c_git_dirty=`tput setaf 1`
@@ -42,8 +42,7 @@ git_color ()
   echo -e -n $git_color
 
 }
-TITLEBAR='\[\033]2;\u@\h\007\]'
-PS1="${TITLEBAR}\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git_branch)\[$c_reset\]\$ "
+PS1='\[\033]2;\u@\h\007\]\[$c_user\]\u@\h\[$c_reset\]:\[$c_path\]\w\[$c_reset\]\[$(git_color)\]$(git_branch)\[$c_reset\]\$ '
 
 export GOPATH=$HOME/code/go
 
