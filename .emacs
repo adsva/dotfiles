@@ -29,8 +29,6 @@
   :ensure t)
 (use-package go-eldoc
   :ensure t)
-(use-package cc-mode
-  :ensure t)
 (use-package go-mode
   :config
   (setq gofmt-command "goimports")
@@ -94,6 +92,15 @@
   (setq jedi:complete-on-dot t)
   (setq jedi:use-shortcuts t)
   :ensure t)
+(use-package cc-mode
+  :ensure t)
+(use-package rust-mode
+  :ensure t)
+(use-package yaml-mode
+  :ensure t)
+(use-package py-isort
+  :ensure t)
+
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
