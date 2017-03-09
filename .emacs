@@ -99,6 +99,8 @@
 (use-package yaml-mode
   :ensure t)
 (use-package py-isort
+  :config
+  (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
 
 
