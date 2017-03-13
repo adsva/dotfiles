@@ -87,8 +87,13 @@
   :ensure t)
 (use-package jedi
   :config
+  (defun add-py-debug ()
+    (interactive)
+    (move-beginning-of-line 1)
+    (insert "import pdb; pdb.set_trace();\n"))
   (add-hook 'python-mode-hook 'jedi:setup)
   (add-hook 'python-mode-hook 'venv-projectile-auto-workon)
+  (add-hook 'python-mode-hook (lambda () (local-set-key (kbd "C-b") 'add-py-debug)))
   (setq jedi:complete-on-dot t)
   (setq jedi:use-shortcuts t)
   :ensure t)
@@ -102,7 +107,6 @@
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
-
 
 (add-to-list 'load-path "~/.emacs.d/lisp/")
 
