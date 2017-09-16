@@ -1,4 +1,6 @@
 ; packages!
+(add-to-list 'load-path "~/.emacs.d/elisp/")
+
 (require 'package)
 (add-to-list 'package-archives
   '("melpa" . "http://melpa.org/packages/") t)
@@ -15,7 +17,6 @@
   :init
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
   (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
   (setq web-mode-engines-alist '(("django"    . "\\.html\\'")))
   (setq web-mode-markup-indent-offset 2)
@@ -56,6 +57,7 @@
   (global-flycheck-mode)
   (setq flycheck-flake8rc "~/.flake8rc")
   (flycheck-add-mode 'javascript-eslint 'web-mode)
+  (flycheck-add-mode 'javascript-eslint 'js-mode)
   (setq-default flycheck-disabled-checkers
                 (append flycheck-disabled-checkers
                         '(javascript-jshint)))
@@ -101,14 +103,27 @@
   :ensure t)
 (use-package rust-mode
   :ensure t)
+(use-package mmm-mode
+  :ensure t)
+(use-package vue-mode
+  :config
+  (set-face-background 'mmm-default-submode-face "#252525")
+  :ensure t)
 (use-package yaml-mode
   :ensure t)
 (use-package py-isort
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
-
-(add-to-list 'load-path "~/.emacs.d/lisp/")
+(use-package crystal-mode
+  :config
+  (add-to-list 'auto-mode-alist '("\\.cr$" . crystal-mode))
+  (add-to-list 'interpreter-mode-alist '("crystal" . crystal-mode))
+  :ensure f)
+(use-package flycheck-crystal
+  :config
+  (add-hook 'crystal-mode-hook 'flycheck-mode)
+  :ensure f)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
@@ -119,6 +134,8 @@
 (setq-default indent-tabs-mode nil)
 (setq-default tab-width 4)
 (setq-default c-basic-offset 2)
+(setq js-indent-level 2)
+
 (show-paren-mode 1)
 (column-number-mode 1)
 (setq scroll-step 1)
@@ -266,7 +283,7 @@
  '(global-font-lock-mode t)
  '(package-selected-packages
    (quote
-    (virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
+    (vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
