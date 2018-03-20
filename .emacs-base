@@ -9,7 +9,6 @@
 (show-paren-mode 1)
 (column-number-mode 1)
 (setq scroll-step 1)
-(scroll-bar-mode 0)
 (require 'ido)
 (ido-mode 1)
 (ido-everywhere 1)
