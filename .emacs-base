@@ -1,0 +1,46 @@
+(setq make-backup-files nil)
+(global-set-key "\M-r" 'rgrep)
+(global-set-key "\M-n" 'next-error)
+(global-set-key "\M-p" 'previous-error)
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq-default c-basic-offset 2)
+(setq js-indent-level 2)
+(show-paren-mode 1)
+(column-number-mode 1)
+(setq scroll-step 1)
+(scroll-bar-mode 0)
+(require 'ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(require 'uniquify)
+(setq-default uniquify-buffer-name-style 'post-forward)
+
+
+;;;---------------------------------------------------------------------
+;;; display-buffer
+
+;; The default behaviour of `display-buffer' is to always create a new
+;; window. As I normally use a large display sporting a number of
+;; side-by-side windows, this is a bit obnoxious.
+;;
+;; The code below will make Emacs reuse existing windows, with the
+;; exception that if have a single window open in a large display, it
+;; will be split horisontally.
+
+(setq pop-up-windows nil)
+
+(defun my-display-buffer-function (buf not-this-window)
+  (if (and (not pop-up-frames)
+           (one-window-p)
+           (or not-this-window
+               (not (eq (window-buffer (selected-window)) buf)))
+           (> (frame-width) 162))
+      (split-window-horizontally))
+  ;; Note: Some modules sets `pop-up-windows' to t before calling
+  ;; `display-buffer' -- Why, oh, why!
+  (let ((display-buffer-function nil)
+        (pop-up-windows nil))
+    (display-buffer buf not-this-window)))
+
+(setq display-buffer-function 'my-display-buffer-function)
