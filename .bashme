@@ -49,3 +49,4 @@ export GOPATH=$HOME/code/go
 alias semacs="SUDO_EDITOR=\"emacsclient -t -a emacs\" sudoedit"
 
 export PROMPT_COMMAND='history -a'
+export EDITOR='emacs -q -nw'

@@ -13,6 +13,12 @@
 
 (require 'use-package)
 
+(defun enable-minor-mode (my-pair)
+  "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
+  (if (buffer-file-name)
+      (if (string-match (car my-pair) buffer-file-name)
+      (funcall (cdr my-pair)))))
+
 (use-package web-mode
   :init
   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
@@ -28,6 +34,9 @@
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
+  (setq web-mode-style-padding 0)
+  (setq web-mode-script-padding 0)
+  (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-ac-sources-alist
         '(("css" . (ac-source-css-property-names ac-source-css-property))
           ("javascript" . (ac-source-words-in-buffer))
@@ -35,7 +44,10 @@
   (setq web-mode-enable-current-column-highlight t)
   (add-hook 'web-mode-hook (lambda () (tern-mode t)))
   (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil))
-
+  (add-hook 'web-mode-hook #'add-node-modules-path)
+  (add-hook 'web-mode-hook #'(lambda ()
+                               (enable-minor-mode
+                                '("\\.\\(js\\|vue\\)\\'" . prettier-js-mode))))
   :ensure t)
 (use-package auto-complete
   :config
@@ -110,6 +122,9 @@
   :ensure t)
 (use-package jedi
   :config
+  (setq python-environment-virtualenv
+        (append python-environment-virtualenv
+                '("--python" "/usr/bin/python3")))
   (defun add-py-debug ()
     (interactive)
     (move-beginning-of-line 1)
@@ -308,7 +323,7 @@
  '(global-font-lock-mode t)
  '(package-selected-packages
    (quote
-    (tide zenburn-theme js2-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
+    (scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
