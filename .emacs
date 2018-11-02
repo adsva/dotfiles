@@ -152,15 +152,8 @@
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
-(use-package crystal-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.cr$" . crystal-mode))
-  (add-to-list 'interpreter-mode-alist '("crystal" . crystal-mode))
-  :ensure f)
-(use-package flycheck-crystal
-  :config
-  (add-hook 'crystal-mode-hook 'flycheck-mode)
-  :ensure f)
+(use-package blacken
+  :ensure t)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
@@ -323,7 +316,7 @@
  '(global-font-lock-mode t)
  '(package-selected-packages
    (quote
-    (scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
+    (blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
