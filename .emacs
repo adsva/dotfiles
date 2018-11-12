@@ -146,13 +146,16 @@
 (use-package yaml-mode
   :ensure t)
 (use-package tern
-  :config
+  :ensure t)
+(use-package tern-auto-complete
   :ensure t)
 (use-package py-isort
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
 (use-package blacken
+  :ensure t)
+(use-package prettier-js
   :ensure t)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
