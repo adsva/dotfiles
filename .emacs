@@ -27,7 +27,7 @@
   (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
   (defvar ac-source-css-property-names
   '((candidates . (loop for property in ac-css-property-alist
-                        collect (car property)))))
+			collect (car property)))))
 
   :config
   (setq web-mode-engines-alist '(("django"    . "\\.html\\'")))
@@ -39,16 +39,16 @@
   (setq web-mode-script-padding 0)
   (setq web-mode-enable-current-element-highlight t)
   (setq web-mode-ac-sources-alist
-        '(("css" . (ac-source-css-property-names ac-source-css-property))
-          ("javascript" . (ac-source-words-in-buffer))
-          ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+	'(("css" . (ac-source-css-property-names ac-source-css-property))
+	  ("javascript" . (ac-source-words-in-buffer))
+	  ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
   (setq web-mode-enable-current-column-highlight t)
   (add-hook 'web-mode-hook (lambda () (tern-mode t)))
   (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil))
   (add-hook 'web-mode-hook #'add-node-modules-path)
   (add-hook 'web-mode-hook #'(lambda ()
-                               (enable-minor-mode
-                                '("\\.\\(js\\|vue\\)\\'" . prettier-js-mode))))
+			       (enable-minor-mode
+				'("\\.\\(js\\|vue\\)\\'" . prettier-js-mode))))
   :ensure t)
 (use-package auto-complete
   :config
@@ -93,15 +93,15 @@
   (flycheck-add-mode 'javascript-eslint 'web-mode)
   (flycheck-add-mode 'javascript-eslint 'js-mode)
   (setq-default flycheck-disabled-checkers
-                (append flycheck-disabled-checkers
-                        '(javascript-jshint)))
+		(append flycheck-disabled-checkers
+			'(javascript-jshint)))
   (defun my/use-eslint-from-node-modules ()
     (let* ((root (locate-dominating-file
-                  (or (buffer-file-name) default-directory)
-                  "node_modules"))
-           (eslint (and root
-                        (expand-file-name "node_modules/eslint/bin/eslint.js"
-                                          root))))
+		  (or (buffer-file-name) default-directory)
+		  "node_modules"))
+	   (eslint (and root
+			(expand-file-name "node_modules/eslint/bin/eslint.js"
+					  root))))
     (when (and eslint (file-executable-p eslint))
       (setq-local flycheck-javascript-eslint-executable eslint))))
   (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
@@ -124,8 +124,8 @@
 (use-package jedi
   :config
   (setq python-environment-virtualenv
-        (append python-environment-virtualenv
-                '("--python" "/usr/bin/python3")))
+	(append python-environment-virtualenv
+		'("--python" "/usr/bin/python3")))
   (defun add-py-debug ()
     (interactive)
     (move-beginning-of-line 1)
@@ -150,6 +150,8 @@
   :config
   (setq tern-command (append tern-command '("--no-port-file")))
   :ensure t)
+(use-package tern-auto-complete
+  :ensure t)
 (use-package py-isort
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
@@ -158,8 +160,10 @@
   :config
   (defun conditional-blacken-mode ()
     (cond ((locate-dominating-file default-directory ".blacken")
-           (blacken-mode))))
+	   (blacken-mode))))
   (add-hook 'python-mode-hook 'conditional-blacken-mode)
+  :ensure t)
+(use-package prettier-js
   :ensure t)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
@@ -203,7 +207,7 @@
   (defadvice ido-find-file (after find-file-sudo activate)
     "Find file as root if necessary."
     (unless (and buffer-file-name
-                 (file-writable-p buffer-file-name))
+		 (file-writable-p buffer-file-name))
       (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
 
 (add-hook 'ido-setup-hook 'ido-define-keys)
@@ -218,8 +222,8 @@
   (interactive)
   (dolist (buf (buffer-list))
     (with-current-buffer buf
-        (when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
-          (revert-buffer t t t) )))
+	(when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
+	  (revert-buffer t t t) )))
   (message "Refreshed open files.") )
 
 (global-set-key "\M-r" 'rgrep)
@@ -251,15 +255,15 @@
 
 (defun my-display-buffer-function (buf not-this-window)
   (if (and (not pop-up-frames)
-           (one-window-p)
-           (or not-this-window
-               (not (eq (window-buffer (selected-window)) buf)))
-           (> (frame-width) 162))
+	   (one-window-p)
+	   (or not-this-window
+	       (not (eq (window-buffer (selected-window)) buf)))
+	   (> (frame-width) 162))
       (split-window-horizontally))
   ;; Note: Some modules sets `pop-up-windows' to t before calling
   ;; `display-buffer' -- Why, oh, why!
   (let ((display-buffer-function nil)
-        (pop-up-windows nil))
+	(pop-up-windows nil))
     (display-buffer buf not-this-window)))
 
 (setq display-buffer-function 'my-display-buffer-function)
@@ -297,16 +301,16 @@
 ; space indentation in c-modes
 (setq c-mode-hook
     (function (lambda ()
-                (setq indent-tabs-mode nil)
-                (setq c-indent-level 4))))
+		(setq indent-tabs-mode nil)
+		(setq c-indent-level 4))))
 (setq objc-mode-hook
     (function (lambda ()
-                (setq indent-tabs-mode nil)
-                (setq c-indent-level 4))))
+		(setq indent-tabs-mode nil)
+		(setq c-indent-level 4))))
 (setq c++-mode-hook
     (function (lambda ()
-                (setq indent-tabs-mode nil)
-                (setq c-indent-level 4))))
+		(setq indent-tabs-mode nil)
+		(setq c-indent-level 4))))
 
 (setq c-default-style "k&r"
       c-basic-offset 2)
