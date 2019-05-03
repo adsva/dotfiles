@@ -32,6 +32,7 @@
   :config
   (setq web-mode-engines-alist '(("django"    . "\\.html\\'")))
   (setq web-mode-markup-indent-offset 2)
+  (setq web-mode-attr-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   (setq web-mode-style-padding 0)
@@ -147,12 +148,18 @@
   :ensure t)
 (use-package tern
   :config
+  (setq tern-command (append tern-command '("--no-port-file")))
   :ensure t)
 (use-package py-isort
   :config
   (add-hook 'before-save-hook 'py-isort-before-save)
   :ensure t)
 (use-package blacken
+  :config
+  (defun conditional-blacken-mode ()
+    (cond ((locate-dominating-file default-directory ".blacken")
+           (blacken-mode))))
+  (add-hook 'python-mode-hook 'conditional-blacken-mode)
   :ensure t)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
@@ -316,7 +323,7 @@
  '(global-font-lock-mode t)
  '(package-selected-packages
    (quote
-    (blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
+    (toml-mode blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
 (custom-set-faces
