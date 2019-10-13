@@ -118,6 +118,8 @@
   :ensure t)
 (use-package sublime-themes
   :ensure t)
+(use-package nord-theme
+  :ensure t)
 (use-package ido-vertical-mode
   :config
   (ido-vertical-mode)
