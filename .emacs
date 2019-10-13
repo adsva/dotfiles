@@ -169,9 +169,10 @@
 
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
-  (load-theme 'dorsey t)
-  (set-face-background 'default "#202020")
-  (set-face-foreground 'default "#f5f5f5")
+  (load-theme 'nord t)
+  (set-face-background 'default "#222222")
+  (set-face-foreground 'default "#f0f0f0")
+  (set-face-font 'default "-ADBO-Source Code Pro-semibold-normal-normal-*-*-*-*-*-m-0-iso10646-1")
 )
 
 (setq vc-git-grep-template "git --no-pager grep -n <C> -e <R> -- <F> :^data")
@@ -317,6 +318,7 @@
 
 (setq c-default-style "k&r"
       c-basic-offset 2)
+
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -328,13 +330,6 @@
  '(font-use-system-font t)
  '(global-font-lock-mode t)
  '(package-selected-packages
-   (quote
-    (toml-mode blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
+   '(color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow base16-theme spacegray-theme reykjavik-theme majapahit-theme zenburn-theme nord-theme blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido))
  '(show-paren-mode t)
  '(tool-bar-mode nil))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:background nil)))))
