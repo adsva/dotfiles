@@ -246,6 +246,9 @@
 (global-set-key [S-dead-grave] "`")
 (global-set-key (kbd "C-<backspace>") 'c-hungry-delete-backwards)
 
+(setq split-height-threshold nil) ;; Avoid horiz-split
+
+
 ;; ========== Place Backup Files in Specific Directory ==========
 
 ;; Enable backup files.
