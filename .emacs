@@ -162,6 +162,12 @@
   :ensure t)
 (use-package prettier-js
   :ensure t)
+(use-package py-isort
+  :config
+  (setq py-isort-options '("--multi-line=3" "--trailing-comma"))
+  (add-hook 'before-save-hook 'py-isort-before-save)
+
+  :ensure t)
 
 (add-hook 'after-init-hook 'my-after-init-hook)
 (defun my-after-init-hook ()
@@ -227,7 +233,7 @@
   (message "Refreshed open files.") )
 
 (global-set-key "\M-r" 'rgrep)
-(global-set-key "\M-n" 'next-error)
+(global-set-key "\M-n" 'next-match)
 (global-set-key "\M-p" 'previous-error)
 
 ;; More ergonomical than arrow keys
