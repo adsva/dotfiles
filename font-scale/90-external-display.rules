@@ -1,0 +1,2 @@
+SUBSYSTEM=="usb", ACTION=="add", ENV{PRODUCT}=="bda/5483/4", RUN+="/home/adsva/.local/bin/set-font-scale 1.2"
+SUBSYSTEM=="usb", ACTION=="remove", ENV{PRODUCT}=="bda/5483/4", RUN+="/home/adsva/.local/bin/set-font-scale 1.0"

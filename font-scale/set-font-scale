@@ -1,0 +1,30 @@
+#!/bin/bash
+
+#Detect the name of the display in use
+display=":$(ls /tmp/.X11-unix/* | sed 's#/tmp/.X11-unix/X##' | head -n 1)"
+#Detect the user using such display
+user="adsva"
+#Detect the id of the user
+uid=$(id -u $user)
+
+
+# Get Current Scaling factor
+SCALE=$(sudo -H -u $user DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus gsettings get org.gnome.desktop.interface text-scaling-factor)
+
+
+# Set what to toggle to
+#if [ $SCALE == '1.0' ]; then
+#    SCALE_SWITCH=1.2
+#else [ $SCALE == '1.2' ]
+#    SCALE_SWITCH=1.0
+#fi
+
+SCALE_SWITCH=$1
+
+logger "Setting font scale to $SCALE_SWITCH"
+
+# (Optional) Message intentions to CLI and GNOME Notifications
+sudo -u $user DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus notify-send "Setting font scale to $SCALE_SWITCH"
+
+# Run switch command
+sudo -H -u $user DISPLAY=$display DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$uid/bus gsettings set org.gnome.desktop.interface text-scaling-factor $SCALE_SWITCH
