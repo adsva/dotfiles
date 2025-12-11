@@ -1,0 +1,40 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      "ctrl-x 1": "pane::JoinAll"
+    }
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "alt-w": ["workspace::SendKeystrokes", "ctrl-c escape"],
+      "ctrl-w": ["workspace::SendKeystrokes", "ctrl-x escape"],
+      "ctrl-y": "editor::Paste",
+      "ctrl-p": "pane::DeploySearch",
+      "ctrl-f": "file_finder::Toggle",
+      "ctrl-l": "projects::OpenRecent",
+      "alt-r": "editor::FindAllReferences"
+    }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "alt-n": "search::SelectNextMatch",
+      "alt-p": "search::SelectPreviousMatch"
+    }
+  },
+  {
+    "context": "BufferSearchBar > Editor",
+    "bindings": {
+      "down": "buffer_search::Dismiss"
+    }
+  }
+]
