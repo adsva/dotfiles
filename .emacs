@@ -1,6 +1,3 @@
-; packages!
-(add-to-list 'load-path "~/.emacs.d/elisp/")
-
 (require 'package)
 
 (add-to-list 'package-archives
@@ -12,304 +9,227 @@
       (package-refresh-contents)
       (package-install 'use-package)))
 
-(require 'use-package)
 
-(defun enable-minor-mode (my-pair)
-  "Enable minor mode if filename match the regexp.  MY-PAIR is a cons cell (regexp . minor-mode)."
-  (if (buffer-file-name)
-      (if (string-match (car my-pair) buffer-file-name)
-      (funcall (cdr my-pair)))))
+;; (use-package lsp-mode
+;;   :custom
+;;   (lsp-enable-snippet nil)
+;;   (lsp-pylsp-plugins-flake8-ignore ["W291" "E203" "E501" "W503" "E701" "E704" "D102"])
+;;   (lsp-pylsp-plugins-pydocstyle-enabled nil)
+;;   (lsp-pylsp-plugins-isort-enabled nil)
+;;   :hook
+;;    ((python-mode . lsp))
+;;    ((web-mode . lsp))
+;;   :ensure t)
 
-(use-package web-mode
-  :init
-  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.jsx\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
-  (defvar ac-source-css-property-names
-  '((candidates . (loop for property in ac-css-property-alist
-			collect (car property)))))
+(use-package lsp-pyright
+  :ensure t
+  :custom (lsp-pyright-langserver-command "pyright") ;; or basedpyright
+  :hook (python-mode . (lambda ()
+                          (require 'lsp-pyright)
+                          (lsp)))
+  :config
+  (define-key lsp-mode-map (kbd "C-c l") lsp-command-map)
+  (global-set-key "\M-r" 'lsp-find-references)
+ )
+  
 
-  :config
-  (setq web-mode-engines-alist '(("django"    . "\\.html\\'")))
-  (setq web-mode-markup-indent-offset 2)
-  (setq web-mode-attr-indent-offset 2)
-  (setq web-mode-code-indent-offset 2)
-  (setq web-mode-css-indent-offset 2)
-  (setq web-mode-style-padding 0)
-  (setq web-mode-script-padding 0)
-  (setq web-mode-enable-current-element-highlight t)
-  (setq web-mode-ac-sources-alist
-	'(("css" . (ac-source-css-property-names ac-source-css-property))
-	  ("javascript" . (ac-source-words-in-buffer))
-	  ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-  (setq web-mode-enable-current-column-highlight t)
-  (add-hook 'web-mode-hook (lambda () (tern-mode t)))
-  (add-to-list 'web-mode-indentation-params '("lineup-calls" . nil))
-  (add-hook 'web-mode-hook #'add-node-modules-path)
-  (add-hook 'web-mode-hook #'(lambda ()
-			       (enable-minor-mode
-				'("\\.\\(js\\|vue\\)\\'" . prettier-js-mode))))
-  :ensure t)
-(use-package auto-complete
-  :config
-  (require 'auto-complete-config)
-  (add-to-list 'ac-modes 'web-mode)
-  (add-to-list 'ac-modes 'python-mode)
-  (global-auto-complete-mode t)
-  (setq ac-ignore-case nil)
-  :ensure t)
-(use-package go-eldoc
-  :ensure t)
-(use-package go-mode
-  :config
-  (setq gofmt-command "goimports")
-  (add-hook 'before-save-hook 'gofmt-before-save)
-  (add-hook 'go-mode-hook 'go-eldoc-setup)
-  :ensure t)
-(use-package go-guru
-  :ensure t)
-(use-package go-autocomplete
-  :ensure t)
-(use-package virtualenvwrapper
-  :config
-  :ensure t)
-(use-package projectile
-  :config
-  (projectile-global-mode)
-  (setq projectile-completion-system 'ido)
-  (setq projectile-use-git-grep t)
-  (setq projectile-switch-project-action 'venv-projectile-auto-workon)
-  (global-set-key "\C-f" 'projectile-find-file)
-  (global-set-key "\C-p" 'projectile-grep)
-  :ensure t)
-(use-package flycheck
-  :config
-  (global-flycheck-mode)
-  (setq flycheck-flake8rc "~/.flake8rc")
-  (flycheck-add-mode 'javascript-eslint 'web-mode)
-  (flycheck-add-mode 'javascript-eslint 'js-mode)
-  (setq-default flycheck-disabled-checkers
-		(append flycheck-disabled-checkers
-			'(javascript-jshint)))
-  (defun my/use-eslint-from-node-modules ()
-    (let* ((root (locate-dominating-file
-		  (or (buffer-file-name) default-directory)
-		  "node_modules"))
-	   (eslint (and root
-			(expand-file-name "node_modules/eslint/bin/eslint.js"
-					  root))))
-    (when (and eslint (file-executable-p eslint))
-      (setq-local flycheck-javascript-eslint-executable eslint))))
-  (add-hook 'flycheck-mode-hook #'my/use-eslint-from-node-modules)
-  :ensure t)
-(use-package flx-ido
-  :config
-  (flx-ido-mode 1)
-  (setq ido-use-faces nil)
-  :ensure t)
-(use-package ws-butler
-  :config
-  (ws-butler-global-mode)
-  :ensure t)
-(use-package sublime-themes
-  :ensure t)
-(use-package fantom-theme
-  :ensure t)
 (use-package ido-vertical-mode
   :config
   (ido-vertical-mode)
   :ensure t)
-(use-package jedi
+
+(use-package ws-butler
   :config
-  (setq python-environment-virtualenv
-	(append python-environment-virtualenv
-		'("--python" "/usr/bin/python3")))
-  (defun add-py-debug ()
-    (interactive)
-    (move-beginning-of-line 1)
-    (insert "import pdb; pdb.set_trace();\n"))
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (add-hook 'python-mode-hook 'venv-projectile-auto-workon)
-  (add-hook 'python-mode-hook (lambda () (local-set-key (kbd "C-b") 'add-py-debug)))
-  (setq jedi:complete-on-dot t)
-  (setq jedi:use-shortcuts t)
+  (ws-butler-global-mode)
   :ensure t)
-(use-package cc-mode
-  :ensure t)
-(use-package sass-mode
-  :config
-  (add-to-list 'auto-mode-alist '("\\.scss\\'" . sass-mode))
-  :ensure t)
-(use-package rust-mode
-  :ensure t)
-(use-package yaml-mode
-  :ensure t)
-(use-package tern
-  :config
-  (setq tern-command (append tern-command '("--no-port-file")))
-  :ensure t)
-(use-package py-isort
-  :config
-  (add-hook 'before-save-hook 'py-isort-before-save)
-  :ensure t)
+
 (use-package blacken
   :config
-  (defun conditional-blacken-mode ()
-    (cond ((locate-dominating-file default-directory ".blacken")
-	   (blacken-mode))))
-  (add-hook 'python-mode-hook 'conditional-blacken-mode)
+  (add-hook 'python-mode-hook 'blacken-mode)
+  :ensure t)
+
+(use-package fantom-theme
+  :ensure t)
+(use-package sublime-themes
+  :ensure t)
+(use-package company
+  :ensure t)
+(use-package web-mode
+  :init
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
+  :hook
+  (web-mode . prettier-js-mode)
+  :custom
+  (web-mode-markup-indent-offset 2)
+  (web-mode-css-indent-offset 2)
+  (web-mode-code-indent-offset 2)
+  (web-mode-style-padding 0)
+  (web-mode-script-padding 0)
+  (web-mode-enable-current-element-highlight t)
   :ensure t)
 (use-package prettier-js
   :ensure t)
+
+(use-package projectile
+  :config
+  (projectile-mode)
+  (setq projectile-completion-system 'ido)
+  (setq projectile-use-git-grep t)
+  ;(setq projectile-switch-project-action 'venv-projectile-auto-workon)
+  (global-set-key "\C-f" 'projectile-find-file)
+  (global-set-key "\C-p" 'projectile-grep)
+  (global-set-key "\C-o" 'projectile-switch-to-buffer)
+  (global-set-key "\C-l" 'projectile-switch-project)
+  :ensure t)
+(use-package f :ensure t)
+(use-package pyvenv
+  :config
+  (defun pyvenv-autoload ()
+          (interactive)
+          "auto activate venv directory if exists"
+          (f-traverse-upwards (lambda (path)
+              (let ((venv-path (f-expand "venv" path)))
+              (when (f-exists? venv-path)
+              (pyvenv-activate venv-path))))))
+
+  (add-hook 'python-mode-hook 'pyvenv-autoload)
+ :ensure t)
+
+
+(use-package flycheck
+  :config
+  ;(global-flycheck-mode)
+  ;(setq flycheck-flake8rc ".flake8")
+  :ensure t)
+
+
+(use-package persp-projectile
+  :config
+  (setq persp-suppress-no-prefix-key-warning t)
+  (persp-mode)
+  :ensure t)
+
 (use-package py-isort
   :config
   (setq py-isort-options '("--multi-line=3" "--trailing-comma"))
   (add-hook 'before-save-hook 'py-isort-before-save)
-
   :ensure t)
 
-(add-hook 'after-init-hook 'my-after-init-hook)
-(defun my-after-init-hook ()
-  (load-theme 'fantom t)
-  (set-face-background 'default "#222222")
-  (set-face-foreground 'default "#f0f0f0")
-  (set-face-font 'default "-ADBO-Source Code Pro-semibold-normal-normal-*-*-*-*-*-m-0-iso10646-1")
-)
+;(use-package ivy
+;  :ensure t)
 
-(setq vc-git-grep-template "git --no-pager grep -n <C> -e <R> -- <F> :^data")
-(setq-default indent-tabs-mode nil)
-(setq-default tab-width 4)
-(setq-default c-basic-offset 2)
-(setq js-indent-level 2)
-
-(show-paren-mode 1)
-(column-number-mode 1)
-(setq scroll-step 1)
-(scroll-bar-mode 0)
-
-;; IF colors are causing trouble with screen, try ading this to
-;; screenrc and setting TERM to xterm-26color
-;; # terminfo and termcap for nice 256 color terminal
-;; # allow bold colors - necessary for some reason
-;; attrcolor b ".I"
-;; # tell screen how to set colors. AB = background, AF=foreground
-;; termcapinfo xterm 'Co#256:AB=\E[48;5;%dm:AF=\E[38;5;%dm'
-;; # erase background with current bg color
-;; defbce "on"
-
-;; Better buffer handling
-(require 'ido)
-(ido-mode 1)
-(ido-everywhere 1)
-
-(defun ido-define-keys () ;; C-n/p is more intuitive in vertical layout
-  (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
-  (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
-  (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
-  (define-key ido-completion-map (kbd "<up>") 'ido-prev-match)
-  (defadvice ido-find-file (after find-file-sudo activate)
-    "Find file as root if necessary."
-    (unless (and buffer-file-name
-		 (file-writable-p buffer-file-name))
-      (find-alternate-file (concat "/sudo:root@localhost:" buffer-file-name)))))
-
+; ido
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(defun ido-define-keys ()
+ (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
+ (define-key ido-completion-map (kbd "<down>") 'ido-next-match)
+ (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)
+ (define-key ido-completion-map (kbd "<up>") 'ido-prev-match))
 (add-hook 'ido-setup-hook 'ido-define-keys)
+(ido-mode 1)
 
+
+
+; uniquify
 (require 'uniquify)
 (setq-default uniquify-buffer-name-style 'post-forward)
 
-(setq ack-and-a-half-executable "/usr/bin/ack")
-
-(setq exec-path (append exec-path '("~/.local/bin")))
-
-(defun revert-all-buffers ()
-  "Refreshes all open buffers from their respective files."
-  (interactive)
-  (dolist (buf (buffer-list))
-    (with-current-buffer buf
-	(when (and (buffer-file-name) (file-exists-p (buffer-file-name)) (not (buffer-modified-p)))
-	  (revert-buffer t t t) )))
-  (message "Refreshed open files.") )
-
-(global-set-key "\M-r" 'rgrep)
+; keys
+;(global-set-key "\M-r" 'rgrep)
 (global-set-key "\M-n" 'next-match)
 (global-set-key "\M-p" 'previous-error)
-
-;; More ergonomical than arrow keys
-(global-set-key "\M-i" 'previous-line)
-(global-set-key "\M-j" 'backward-char)
-(global-set-key "\M-k" 'next-line)
-(global-set-key "\M-l" 'forward-char)
-
-
-(global-set-key [S-dead-grave] "`")
-(global-set-key (kbd "C-<backspace>") 'c-hungry-delete-backwards)
-
-(setq split-height-threshold nil) ;; Avoid horiz-split
-
-
-;; ========== Place Backup Files in Specific Directory ==========
-
-;; Enable backup files.
-(setq make-backup-files t)
-
-;; Save all backup files in this directory.
-(setq backup-directory-alist (quote ((".*" . "~/.emacs_backups/"))))
+(global-set-key "\M-e" 'flycheck-next-error)
 
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
 
-
-; Startup splash
+(setq-default indent-tabs-mode nil)
+(setq-default tab-width 4)
+(setq-default c-basic-offset 2)
 (setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(setq-default scroll-error-top-bottom t)
+(setq make-backup-files nil)
+(setq column-number-mode t)
 
-; Tilde issues
-(defun insert-tilde ()
-  "mg: inserts ~ at cursor position"
-  (interactive)
-  (insert "~")
-  )
-(global-set-key [dead-tilde] 'insert-tilde)
+(add-hook 'after-init-hook 'my-after-init-hook)
+(defun my-after-init-hook ()
+  ;(load-theme 'base16-ashes t)
+  (load-theme 'base16-everforest-dark-hard t)
+  ;(load-theme 'base16- t)
+  ;(load-theme 'base16-ashes t)
+  (set-face-background 'default "#171e23")
+  (set-face-foreground 'default "#f3e6ca")
+)
 
 
-; Damn delete!
-(global-set-key "\C-d" 'delete-backward-char)
+;; Optional: ensure flycheck cycles, both when going backward and forward.
+;; Tries to handle arguments correctly.
+;; Since flycheck-previous-error is written in terms of flycheck-next-error,
+;; advising the latter is enough.
+(defun flycheck-next-error-loop-advice (orig-fun &optional n reset)
+  ; (message "flycheck-next-error called with args %S %S" n reset)
+  (condition-case err
+      (apply orig-fun (list n reset))
+    ((user-error)
+     (let ((error-count (length flycheck-current-errors)))
+       (if (and
+            (> error-count 0)                   ; There are errors so we can cycle.
+            (equal (error-message-string err) "No more Flycheck errors"))
+           ;; We need to cycle.
+           (let* ((req-n (if (numberp n) n 1)) ; Requested displacement.
+                  ; An universal argument is taken as reset, so shouldn't fail.
+                  (curr-pos (if (> req-n 0) (- error-count 1) 0)) ; 0-indexed.
+                  (next-pos (mod (+ curr-pos req-n) error-count))) ; next-pos must be 1-indexed
+             ; (message "error-count %S; req-n %S; curr-pos %S; next-pos %S" error-count req-n curr-pos next-pos)
+             ; orig-fun is flycheck-next-error (but without advise)
+             ; Argument to flycheck-next-error must be 1-based.
+             (apply orig-fun (list (+ 1 next-pos) 'reset)))
+         (signal (car err) (cdr err)))))))
 
-; space indentation in c-modes
-(setq c-mode-hook
-    (function (lambda ()
-		(setq indent-tabs-mode nil)
-		(setq c-indent-level 4))))
-(setq objc-mode-hook
-    (function (lambda ()
-		(setq indent-tabs-mode nil)
-		(setq c-indent-level 4))))
-(setq c++-mode-hook
-    (function (lambda ()
-		(setq indent-tabs-mode nil)
-		(setq c-indent-level 4))))
+(advice-add 'flycheck-next-error :around #'flycheck-next-error-loop-advice)
 
-(setq c-default-style "k&r"
-      c-basic-offset 2)
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(column-number-mode t)
  '(custom-safe-themes
-   (quote
-    ("922e96b74620a11b52434d551cf7115b8274dfa42b289eeec44d93378d0bf093" "3cc2385c39257fed66238921602d8104d8fd6266ad88a006d0a4325336f5ee02" "06f0b439b62164c6f8f84fdda32b62fb50b6d00e8b01c2208e55543a6337433a" "4aee8551b53a43a883cb0b7f3255d6859d766b6c5e14bcb01bed572fcbef4328" "628278136f88aa1a151bb2d6c8a86bf2b7631fbea5f0f76cba2a0079cd910f7d" "7bef2d39bac784626f1635bd83693fae091f04ccac6b362e0405abf16a32230c" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "5a7830712d709a4fc128a7998b7fa963f37e960fd2e8aa75c76f692b36e6cf3c" "527df6ab42b54d2e5f4eec8b091bd79b2fa9a1da38f5addd297d1c91aa19b616" "8543b328ed10bc7c16a8a35c523699befac0de00753824d7e90148bca583f986" "6271fc9740379f8e2722f1510d481c1df1fcc43e48fa6641a5c19e954c21cc8f" "4feee83c4fbbe8b827650d0f9af4ba7da903a5d117d849a3ccee88262805f40d" "fee4e306d9070a55dce4d8e9d92d28bd9efe92625d2ba9d4d654fc9cd8113b7f" "50d07ab55e2b5322b2a8b13bc15ddf76d7f5985268833762c500a90e2a09e7aa" "73ad471d5ae9355a7fa28675014ae45a0589c14492f52c32a4e9b393fcc333fd" "760ce657e710a77bcf6df51d97e51aae2ee7db1fba21bbad07aab0fa0f42f834" "aea30125ef2e48831f46695418677b9d676c3babf43959c8e978c0ad672a7329" "fe40c940de3252b231f193d1e4794599142b26bad3d6e98b6a3a330018d409cd" "04ef3f0675af46e7b74d560b5ee130403a6b22d212d8518df6c9fadcf6389b02" "8d805143f2c71cfad5207155234089729bb742a1cb67b7f60357fdd952044315" "45f7fec480eb3bdf364cbfcbc8d11ed0228bcf586ce7370fc30a6ce5770f181a" "3a5f04a517096b08b08ef39db6d12bd55c04ed3d43b344cf8bd855bde6d3a1ae" "a7051d761a713aaf5b893c90eaba27463c791cd75d7257d3a8e66b0c8c346e77" "82358261c32ebedfee2ca0f87299f74008a2e5ba5c502bde7aaa15db20ee3731" "72a81c54c97b9e5efcc3ea214382615649ebb539cb4f2fe3a46cd12af72c7607" "e0d42a58c84161a0744ceab595370cbe290949968ab62273aed6212df0ea94b4" "67e998c3c23fe24ed0fb92b9de75011b92f35d3e89344157ae0d544d50a63a72" "e1498b2416922aa561076edc5c9b0ad7b34d8ff849f335c13364c8f4276904f0" "93268bf5365f22c685550a3cbb8c687a1211e827edc76ce7be3c4bd764054bad" "d96587ec2c7bf278269b8ec2b800c7d9af9e22d816827639b332b0e613314dfd" "ef04dd1e33f7cbd5aa3187981b18652b8d5ac9e680997b45dc5d00443e6a46e3" "aded4ec996e438a5e002439d58f09610b330bbc18f580c83ebaba026bbef6c82" "d9dab332207600e49400d798ed05f38372ec32132b3f7d2ba697e59088021555" "eae831de756bb480240479794e85f1da0789c6f2f7746e5cc999370bbc8d9c8a" "df21cdadd3f0648e3106338649d9fea510121807c907e2fd15565dde6409d6e9" "3d5ef3d7ed58c9ad321f05360ad8a6b24585b9c49abcee67bdcbb0fe583a6950" "3cd28471e80be3bd2657ca3f03fbb2884ab669662271794360866ab60b6cb6e6" "a62f0662e6aa7b05d0b4493a8e245ab31492765561b08192df61c9d1c7e1ddee" "ffac21ab88a0f4603969a24b96993bd73a13fe0989db7ed76d94c305891fad64" "78c1c89192e172436dbf892bd90562bc89e2cc3811b5f9506226e735a953a9c6" "9be1d34d961a40d94ef94d0d08a364c3d27201f3c98c9d38e36f10588469ea57" "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1" "486759384769d44b22bb46072726c2cfb3ccc3d49342e5af1854784d505ffc01" "b3775ba758e7d31f3bb849e7c9e48ff60929a792961a2d536edec8f68c671ca5" "e26780280b5248eb9b2d02a237d9941956fc94972443b0f7aeec12b5c15db9f3" "a774c5551bc56d7a9c362dca4d73a374582caedb110c201a09b410c0ebbb5e70" "0ebe0307942b6e159ab794f90a074935a18c3c688b526a2035d14db1214cf69c" "1e7e097ec8cb1f8c3a912d7e1e0331caeed49fef6cff220be63bd2a6ba4cc365" "fc5fcb6f1f1c1bc01305694c59a1a861b008c534cae8d0e48e4d5e81ad718bc6" "8ecf7ee27ae787aa8fa733f816288671b608762b15f9fc8d31bb4b472630fe31" "b1e54397de2c207e550dc3a090844c4b52d1a2c4a48a17163cce577b09c28236" default)))
- '(font-use-system-font t)
- '(global-font-lock-mode t)
- '(package-selected-packages
-   (quote
-    (fantom-theme color-theme-sanityinc-solarized color-theme-sanityinc-tomorrow base16-theme spacegray-theme reykjavik-theme majapahit-theme zenburn-theme nord-theme blacken scss-mode add-node-modules-path prettier-js nginx-mode swift-mode vue-mode virtualenvwrapper yaml-mode elpy ws-butler web-mode use-package sublime-themes projectile pkgbuild-mode jedi ido-vertical-mode go-guru go-eldoc go-autocomplete flycheck flx-ido)))
- '(show-paren-mode t)
- '(tool-bar-mode nil))
+   '("94256a2952c7a6a77b4f290e6a16d1b2ded393591e7e7fc03edf8cfd34a9b55e"
+     "f8a16292b06df595902fe9ff742af8b160d33106db91f69d4efba46e2f151d48"
+     "847025d7513316abf78a6a26eb785d7979d0fa891cee2dc76d519220c30d043d"
+     "d8b8c09a745470f6c088dce5df19ade98894f4ced69ce32d53aded94d512826d"
+     "ac068453acfa7c3cedd4ad1db7a49230657e5e9c8e2fe4ec287cffc2b8310384"
+     "434c19477cfebbf4582c5aa8d9eb95b1b01207ccb8bd8b562d02ca77e7da31d5"
+     "664111db1521fe3351061dc87aea95fa98b3f244f4b830fbc048d39c3a8bc125"
+     "94ac10e5261b9a32c9f1a7ef88f3fb89bfcbad843436aaaedc97c7975d8e6ab2"
+     "27dac7a05a4dabd15ee4fec7c881b172cb8464a11afcf3de6ffad3c61f20247a"
+     "74797b7cbcc4356101a62037316149faa4935522775adaaa68972f7488361c0d"
+     "33c4f1e69f2f266a0b8e006858039298e6ff00868048cbfb9e20d7e0e4d410c3"
+     "7bf34d114ec815e05a1ecb7f1acfd61ef453bfd27d12cc4c2babfa08ca1314da"
+     "cbc8efdcd8e957c9ede1b4a82fed7fa1f3114ff6e7498c16f0cccb9509c1c17c"
+     "5d205766ba4c831730cf88aaba6fa76cd77af631f8572cd85b661766f25fd206"
+     "de385583975ed8e83b71b212b3094ee74785834718e2413bc3acff36224fba8d"
+     "1cfbec19edafb831c7729be2f6454ec019c21b9a54b39b3bb5ec276a6b21d484"
+     "51fa6edfd6c8a4defc2681e4c438caf24908854c12ea12a1fbfd4d055a9647a3"
+     "c53db9aec64c633360ecb6c1200fee65b55c528ba5dc3853c9c357024b5296c4"
+     "daa27dcbe26a280a9425ee90dc7458d85bd540482b93e9fa94d4f43327128077"
+     "c20728f5c0cb50972b50c929b004a7496d3f2e2ded387bf870f89da25793bb44"
+     "d2ab3d4f005a9ad4fb789a8f65606c72f30ce9d281a9e42da55f7f4b9ef5bfc6"
+     "8363207a952efb78e917230f5a4d3326b2916c63237c1f61d7e5fe07def8d378"
+     "3cc2385c39257fed66238921602d8104d8fd6266ad88a006d0a4325336f5ee02"
+     "09b833239444ac3230f591e35e3c28a4d78f1556b107bafe0eb32b5977204d93"
+     "3cd28471e80be3bd2657ca3f03fbb2884ab669662271794360866ab60b6cb6e6"
+     "9b59e147dbbde5e638ea1cde5ec0a358d5f269d27bd2b893a0947c4a867e14c1"
+     "b3775ba758e7d31f3bb849e7c9e48ff60929a792961a2d536edec8f68c671ca5"
+     default))
+ '(package-selected-packages nil))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
